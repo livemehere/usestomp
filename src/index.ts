@@ -1,35 +1,25 @@
-import { CompatClient, Stomp, StompSubscription } from "@stomp/stompjs";
+import { Client, StompConfig, StompSubscription } from "@stomp/stompjs";
 import { useCallback, useEffect } from "react";
-import SockJS from "sockjs-client";
 
 interface ObjectType {
   [key: string]: any;
 }
 
-let socketClient: WebSocket;
-let stompClient: CompatClient;
+let stompClient: Client;
 let isConnected = false;
 const subscriptions: { [key: string]: StompSubscription } = {};
 
-export function useStomp(url: string, callback?: () => void) {
+export function useStomp(config: StompConfig, callback?: () => void) {
   const connect = useCallback(() => {
-    if (!socketClient) {
-      socketClient = new SockJS(url);
-    }
-
     if (!stompClient) {
-      stompClient = Stomp.over(socketClient);
-      stompClient.debug = () => {
-        return;
-      };
+      stompClient = new Client(config);
+      stompClient.activate();
     }
 
-    if (socketClient && stompClient) {
-      stompClient.connect({}, (receipt: any) => {
-        isConnected = true;
-        callback && callback();
-      });
-    }
+    stompClient.onConnect = (frame) => {
+      isConnected = true;
+      callback && callback();
+    };
   }, []);
 
   const send = useCallback(
@@ -40,7 +30,7 @@ export function useStomp(url: string, callback?: () => void) {
         body: JSON.stringify(body),
       });
     },
-    []
+    [stompClient]
   );
 
   const subscribe = useCallback(
@@ -64,8 +54,8 @@ export function useStomp(url: string, callback?: () => void) {
   }, []);
 
   const disconnect = useCallback(() => {
-    stompClient.disconnect();
-  }, []);
+    stompClient.deactivate();
+  }, [stompClient]);
 
   useEffect(() => {
     connect();

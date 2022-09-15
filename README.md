@@ -1,67 +1,76 @@
 # useStomp hook
 
-> spring 서버와 소켓연결을 하기위해서 stomp를 사용할 수 있습니다. 이 라이브러리는 react-hook 으로 어떤 의존성없이 빠르게 사용할 수있도록 제공합니다.
+This library provides a hook for simple use of stompjs in React
 
-## Example
+## Discription
 
-> useStomp를 활용하여 커스텀한 useChatStomp를 만든 예시입니다.
+```js
+const { disconnect, subscribe, unsubscribe, subscriptions, send, isConnected } =
+  useStomp({
+    brokerURL: SERVER_STOMP_URL,
+  });
+```
 
-```ts
-interface ChatResponse {
-  body: Chat;
-  headers: { [key: string]: any };
-  statusCode: string;
-  statusCodeValue: number;
-}
+This hook automatically manages the entire React App to be a single websocket connection. So feel free to use hook any components.
 
-export function useChatStomp(roomId: string | number, callback?: any) {
-  const {
-    user: { id: userId },
-  } = useCurrentUser();
-  const [chats, setChats] = useState<Chat[]>([]);
-  const firstChatRef = useRef<Chat | undefined>(undefined);
+- disconnect : Disconnect webscoket from server.
+- subscribe : Subscribe sepcific destination
+- unsubscribe : Unsubscribe sepcific destination
+- subscriptions : Returns all destinations you are currently subscribed to.
+- send : Send message with body and headers to specific destination
+- isConnected : Returns the current connection status.
 
-  const { subscribe, isConnected, unsubscribe, send, subscriptions } =
-    useStomp(SERVER_STOMP_URL);
+## Usage
 
-  const setFirstChatRef = useCallback((chat: Chat) => {
-    firstChatRef.current = chat;
-  }, []);
+### Conenct to stomp server
 
-  const sendMessage = useCallback((message: string) => {
-    send(
-      `/send/${roomId}`,
-      { message },
-      {
-        accessToken: getItemFromLS("accessToken") || "",
-      }
-    );
-  }, []);
+```js
+useStomp(
+  {
+    brokerURL: SERVER_STOMP_URL,
+    // Other Config ...
+  },
+  ()=>{
+    // After you're connected, do what you want
+  })
+);
+```
 
-  useEffect(() => {
-    callback && callback();
-  }, [chats]);
+### Subscribe to destination
 
-  useEffect(() => {
-    if (!userId || !isConnected || !roomId) return;
+```js
+subscribe(`/room/user/${userId}`, (body) => {
+  // Body is Object Changed to JSON
+});
+```
 
-    subscribe<ChatResponse>(`/room/${roomId}`, (body) => {
-      setChats((prev) => [...prev, body.body]);
-    });
+### Send Message
 
-    return () => {
-      if (subscriptions[`/room/${roomId}`]) {
-        unsubscribe(`/room/${roomId}`);
-      }
-    };
-  }, [userId, isConnected, roomId]);
+```js
+send("destination", message, headers);
+```
 
-  return {
-    setFirstChatRef,
-    chats,
-    setChats,
-    sendMessage,
-    firstChatRef,
+### Unsubscribe
+
+```js
+useEffect(() => {
+  const destination = "/room/1";
+
+  subscribe(destination, (body) => {
+    // do anything...
+  });
+
+  return () => {
+    // Make sure you're subscribed
+    if (subscriptions[destination]) {
+      unsubscribe(destination);
+    }
   };
-}
+}, []);
+```
+
+### Check Status
+
+```js
+console.log(isConnected); // true or false
 ```
