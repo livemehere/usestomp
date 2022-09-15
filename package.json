@@ -1,6 +1,6 @@
 {
   "name": "usestomp-hook",
-  "version": "1.2.0",
+  "version": "1.2.1",
   "description": "react hook for stomp",
   "main": "index.js",
   "scripts": {
