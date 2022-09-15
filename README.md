@@ -1,6 +1,6 @@
 # useStomp hook
 
-This library provides a hook for simple use of stompjs in React
+This library provides a hook for simple use of stompjs in React [npm](https://www.npmjs.com/package/usestomp-hook)
 
 ## Discription
 
@@ -39,7 +39,7 @@ useStomp(
 ### Subscribe to destination
 
 ```js
-subscribe(`/room/user/${userId}`, (body) => {
+subscribe("/room/...", (body) => {
   // Body is Object Changed to JSON
 });
 ```
@@ -47,23 +47,21 @@ subscribe(`/room/user/${userId}`, (body) => {
 ### Send Message
 
 ```js
-send("destination", message, headers);
+send("/room/...", message, headers);
 ```
 
 ### Unsubscribe
 
 ```js
 useEffect(() => {
-  const destination = "/room/1";
-
-  subscribe(destination, (body) => {
+  subscribe("/room/...", (body) => {
     // do anything...
   });
 
   return () => {
     // Make sure you're subscribed
-    if (subscriptions[destination]) {
-      unsubscribe(destination);
+    if (subscriptions["/room/..."]) {
+      unsubscribe("/room/...");
     }
   };
 }, []);
