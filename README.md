@@ -22,7 +22,7 @@ This hook automatically manages the entire React App to be a single websocket co
 
 ## Usage
 
-### Conenct to stomp server
+### Connect to stomp server
 
 ```js
 useStomp(
