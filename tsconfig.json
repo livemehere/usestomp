@@ -5,6 +5,11 @@
     "declaration": true,
     "outDir": "./lib",
     "strict": true,
-    "esModuleInterop": true
-  }
+    "esModuleInterop": true,
+    "jsx": "react",
+    "moduleResolution": "node",
+    "baseUrl": "./",
+    "isolatedModules": true
+  },
+  "include": ["src/**/*"]
 }

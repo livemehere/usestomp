@@ -1,14 +1,13 @@
-# useStomp hook
+# hook hook
 
 This library provides a hook for simple use of stompjs in React [npm](https://www.npmjs.com/package/usestomp-hook)
+
+> ❗️Major Updated! The Hook has to be used with Provider. Please check the example below.
 
 ## Discription
 
 ```js
-const { disconnect, subscribe, unsubscribe, subscriptions, send, isConnected } =
-  useStomp({
-    brokerURL: SERVER_STOMP_URL,
-  });
+const {disconnect, subscribe, unsubscribe, subscriptions, send, isConnected} = useStomp();
 ```
 
 This hook automatically manages the entire React App to be a single websocket connection. So feel free to use hook any components.
@@ -25,15 +24,10 @@ This hook automatically manages the entire React App to be a single websocket co
 ### Connect to stomp server
 
 ```js
-useStomp(
-  {
-    brokerURL: SERVER_STOMP_URL,
-    // Other Config ...
-  },
-  ()=>{
-    // After you're connected, do what you want
-  })
-);
+// your Root Component
+<StompProvider config={{ brokerURL: SERVER_STOMP_URL }}>
+  <App />
+</StompProvider>
 ```
 
 ### Subscribe to destination
