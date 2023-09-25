@@ -1,4 +1,4 @@
-# hook hook
+# useStomp hook
 
 This library provides a hook for simple use of stompjs in React [npm](https://www.npmjs.com/package/usestomp-hook)
 
